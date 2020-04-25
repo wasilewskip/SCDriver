@@ -11,5 +11,4 @@ void SteamController::run()
         const auto& packet = connectionPtr->read();
         buttons->update(packet);
     }
-    
 }

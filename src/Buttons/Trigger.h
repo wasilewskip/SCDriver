@@ -5,6 +5,9 @@
 
 class Trigger : public Button
 {
+    private:
+    short input;
+
     protected:
     virtual ButtonState processPacket(const SteamInputPacket& steamInputPacket);
 
