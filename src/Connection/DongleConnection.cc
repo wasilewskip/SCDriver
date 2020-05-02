@@ -3,33 +3,33 @@
 
 DongleConnection::DongleConnection(std::unique_ptr<Usb> usb) : usbPtr(std::move(usb))
 {
-    init();
+    const auto x = usbPtr->init();
+    // TODO: add proper way to open device
+    usbPtr->openDeviceWithVidPid(0x28de, 0x1142);
+    auto ret = usbPtr->claimInterface(1);
 }
 
 DongleConnection::~DongleConnection()
 {
-    std::cout << "Destroying object";
-}
-
-void DongleConnection::init()
-{
-    int x = usbPtr->init();
-    this->deviceHandlePtr = usbPtr->openDeviceWithVidPid(0x28de, 0x1142);
-    int ret = usbPtr->claimInterface(this->deviceHandlePtr, 1);
+    usbPtr->releaseInterface(1);
+    usbPtr->closeDevice();
+    usbPtr->exit();
 }
 
 SteamInputPacket DongleConnection::read()
 {
+    constexpr auto PACKET_SIZE = 64;
+    constexpr auto TIMEOUT_MS = 100;
+    constexpr auto ENDPOINT = 0x82;
+
     int bytesRead;
-    unsigned char data[64] = {0};
-    int ret = usbPtr->interruptTransfer(this->deviceHandlePtr, 0x82, data, 64, &bytesRead, 0);
+    uint8_t data[PACKET_SIZE] = {0};
+    auto ret = usbPtr->interruptTransfer(ENDPOINT, data, PACKET_SIZE, &bytesRead, TIMEOUT_MS);
     SteamInputPacket packet = SteamInputPacket(data);
     return packet;
 }
 
 void DongleConnection::write()
 {
-    usbPtr->releaseInterface(this->deviceHandlePtr, 1);
-    usbPtr->closeDevice(this->deviceHandlePtr);
-    usbPtr->exit();
+
 }

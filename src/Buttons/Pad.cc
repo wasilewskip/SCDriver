@@ -1,7 +1,7 @@
 #include "Pad.h"
 #include <iostream>
 
-ButtonState Pad::processPacket(const SteamInputPacket& steamInputPacket)
+void Pad::processPacket(const SteamInputPacket& steamInputPacket, ButtonDataChangedEvent& event)
 {
     ButtonState newState = state;
 
@@ -23,12 +23,11 @@ ButtonState Pad::processPacket(const SteamInputPacket& steamInputPacket)
         break;
     }
 
-    getPadData(newState, steamInputPacket);
-
-    return newState;
+    event.state = newState;
+    event.touchPoint = getTouchPointFromPacket(steamInputPacket);
 }
 
-ButtonState Pad::checkPadState(short touchedIndex, short pressedIndex, const SteamInputPacket& steamInputPacket)
+ButtonState Pad::checkPadState(uint8_t touchedIndex, uint8_t pressedIndex, const SteamInputPacket& steamInputPacket)
 {
     if(steamInputPacket.buttons[touchedIndex] && steamInputPacket.buttons[pressedIndex])
     {
@@ -45,17 +44,18 @@ ButtonState Pad::checkPadState(short touchedIndex, short pressedIndex, const Ste
     
 }
 
-void Pad::getPadData(const ButtonState newState, const SteamInputPacket& steamInputPacket)
+bool Pad::hasDataChanged(const ButtonDataChangedEvent& event)
 {
-    if(isPadUsed(newState) || isJoystickUsed(steamInputPacket))
+    if(isPadUsed(event.state) || isJoystickUsed(event))
     {
-        getTouchPoint(steamInputPacket);
+        state = event.state;
+        touchPoint = event.touchPoint;
+        return true;
     }
-    else if(isPadReleased(newState) || isJoystickReleased(steamInputPacket))
+    else
     {
-        std::cout << "Size of touchPath: " << touchPath.size() << "\n";
-        touchPath.clear();
-    } 
+        return false;
+    }
 }
 
 bool Pad::isPadUsed(const ButtonState newState)
@@ -70,82 +70,71 @@ bool Pad::isPadUsed(const ButtonState newState)
     }
 }
 
-bool Pad::isPadReleased(const ButtonState newState)
+bool Pad::isJoystickUsed(const ButtonDataChangedEvent& event)
 {
-    if(((state == ButtonState::TOUCHED || state == ButtonState::PRESSED) && newState == ButtonState::RELEASED))
+    if((event.touchPoint.x != 0 || event.touchPoint.y != 0) && type == ButtonType::JOYSTICK)
     {
         return true;
     }
     else
     {
-        return false;
+         return false;
     }
 }
 
-bool Pad::isJoystickUsed(const SteamInputPacket& steamInputPacket)
-{
-    if((steamInputPacket.lpadX != 0 || steamInputPacket.lpadY != 0) && type == ButtonType::JOYSTICK)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-    
-}
-
-bool Pad::isJoystickReleased(const SteamInputPacket& steamInputPacket)
-{
-    if(!touchPath.empty() && (steamInputPacket.lpadX == 0 || steamInputPacket.lpadY == 0) && type == ButtonType::JOYSTICK)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-    
-}
-
-void Pad::getTouchPoint(const SteamInputPacket& steamInputPacket)
+TouchPoint Pad::getTouchPointFromPacket(const SteamInputPacket& steamInputPacket)
 {
     switch (type)
     {
     case ButtonType::LEFT_PAD :
+    {
+        return TouchPoint{steamInputPacket.lpadX, steamInputPacket.lpadY};
+        break;
+    }
     case ButtonType::JOYSTICK :
-        touchPath.emplace_back(steamInputPacket.lpadX, steamInputPacket.lpadY);
+    {
+        ButtonState leftPadState = processLeftPad(steamInputPacket);
+        if(leftPadState == ButtonState::RELEASED)
+        {
+            return TouchPoint{steamInputPacket.lpadX, steamInputPacket.lpadY};
+        }
+        else
+        {
+            return TouchPoint{};
+        }
         break;
-
+    }
     case ButtonType::RIGHT_PAD :
-        touchPath.emplace_back(steamInputPacket.rpadX, steamInputPacket.rpadY);
+    {
+        return TouchPoint{steamInputPacket.rpadX, steamInputPacket.rpadY};
         break;
-    
+    }
     default:
+        return TouchPoint{};
         break;
     }
 }
 
 ButtonState Pad::processLeftPad(const SteamInputPacket& steamInputPacket)
 {
-    constexpr short TOUCHED_INDEX = 3;
-    constexpr short PRESSED_INDEX = 1;
+    constexpr auto TOUCHED_INDEX = 3;
+    constexpr auto PRESSED_INDEX = 1;
 
     return checkPadState(TOUCHED_INDEX, PRESSED_INDEX, steamInputPacket);
 }
 
 ButtonState Pad::processRightPad(const SteamInputPacket& steamInputPacket)
 {
-    constexpr short TOUCHED_INDEX = 4;
-    constexpr short PRESSED_INDEX = 2;
+    constexpr auto TOUCHED_INDEX = 4;
+    constexpr auto PRESSED_INDEX = 2;
 
     return checkPadState(TOUCHED_INDEX, PRESSED_INDEX, steamInputPacket);
 }
 
 ButtonState Pad::processJoystick(const SteamInputPacket& steamInputPacket)
 {
-    constexpr short TOUCHED_INDEX = 6;
-    constexpr short PRESSED_INDEX = 1;
+    constexpr auto TOUCHED_INDEX = 6;
+    constexpr auto PRESSED_INDEX = 1;
 
     return checkPadState(TOUCHED_INDEX, PRESSED_INDEX, steamInputPacket);
 }

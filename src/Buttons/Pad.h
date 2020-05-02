@@ -9,23 +9,21 @@
 class Pad : public Button
 {
     private:
-    std::vector<TouchPoint> touchPath;
+    TouchPoint touchPoint;
 
     ButtonState processLeftPad(const SteamInputPacket& steamInputPacket);
     ButtonState processRightPad(const SteamInputPacket& steamInputPacket);
     ButtonState processJoystick(const SteamInputPacket& steamInputPacket);
 
-    ButtonState checkPadState(short touchedIndex, short pressedIndex, const SteamInputPacket& steamInputPacket);
-    void getPadData(const ButtonState newState, const SteamInputPacket& steamInputPacket);
-    void getTouchPoint(const SteamInputPacket& steamInputPacket);
+    ButtonState checkPadState(uint8_t touchedIndex, uint8_t pressedIndex, const SteamInputPacket& steamInputPacket);
+    TouchPoint getTouchPointFromPacket(const SteamInputPacket& steamInputPacket);
 
     bool isPadUsed(const ButtonState newState);
-    bool isPadReleased(const ButtonState newState);
-    bool isJoystickUsed(const SteamInputPacket& steamInputPacket);
-    bool isJoystickReleased(const SteamInputPacket& steamInputPacket);
+    bool isJoystickUsed(const ButtonDataChangedEvent& event);
 
     protected:
-    virtual ButtonState processPacket(const SteamInputPacket& steamInputPacket);
+    virtual void processPacket(const SteamInputPacket& steamInputPacket, ButtonDataChangedEvent& event) override;
+    virtual bool hasDataChanged(const ButtonDataChangedEvent& event) override;
 
     public:
     Pad(ButtonType type) : Button(type) { };

@@ -6,11 +6,12 @@
 class Trigger : public Button
 {
     private:
-    short input;
+    uint16_t input;
 
     protected:
-    virtual ButtonState processPacket(const SteamInputPacket& steamInputPacket);
+    virtual void processPacket(const SteamInputPacket& steamInputPacket, ButtonDataChangedEvent& event) override;
+    virtual bool hasDataChanged(const ButtonDataChangedEvent& event) override;
 
     public:
-    Trigger(ButtonType type) : Button(type) { };
+    Trigger(ButtonType type) : Button(type), input(0) { };
 };

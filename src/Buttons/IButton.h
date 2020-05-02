@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../Connection/SteamInputPacket.h"
+#include "Connection/SteamInputPacket.h"
+#include "ButtonDataChangedEvent.h"
 #include <memory>
 
 class IButton
 {
     public:
-    virtual void updateState(const SteamInputPacket& steamInputPacket) = 0;
+    virtual std::unique_ptr<ButtonDataChangedEvent> updateState(const SteamInputPacket& steamInputPacket) = 0;
 };

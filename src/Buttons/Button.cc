@@ -7,20 +7,39 @@ Button::Button(ButtonType type)
     this->state = ButtonState::RELEASED;
 }
 
-void Button::updateState(const SteamInputPacket& steamInputPacket)
+std::unique_ptr<ButtonDataChangedEvent> Button::updateState(const SteamInputPacket& steamInputPacket)
 {
-    ButtonState newState = processPacket(steamInputPacket);
+    ButtonDataChangedEvent event{type, state};
 
-    if(newState != state)
+    processPacket(steamInputPacket, event);
+    
+    if(hasDataChanged(event))
     {
-        state = newState;
         printButtonState();
+        return std::make_unique<ButtonDataChangedEvent>(event);
+    }
+    else
+    {
+        return nullptr;
     }
 }
 
-ButtonState Button::processPacket(const SteamInputPacket& steamInputPacket)
+void Button::processPacket(const SteamInputPacket& steamInputPacket, ButtonDataChangedEvent& event)
 {
-    return static_cast<ButtonState>(steamInputPacket.buttons[static_cast<int>(type)]);
+    event.state = static_cast<ButtonState>(steamInputPacket.buttons[static_cast<uint8_t>(type)]);
+}
+
+bool Button::hasDataChanged(const ButtonDataChangedEvent& event)
+{
+    if (state != event.state)
+    {
+        state = event.state;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void Button::printButtonState()

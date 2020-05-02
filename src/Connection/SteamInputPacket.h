@@ -7,15 +7,15 @@ class SteamInputPacket
     public:
     std::bitset<24> buttons;
     
-    short leftTrigger;
-    short rightTrigger;
+    uint16_t leftTrigger;
+    uint16_t rightTrigger;
 
-    short lpadX;
-    short lpadY;
-    short rpadX;
-    short rpadY;
+    int16_t lpadX;
+    int16_t lpadY;
+    int16_t rpadX;
+    int16_t rpadY;
 
-    SteamInputPacket(unsigned char* data);
+    SteamInputPacket(uint8_t* data);
 
     void print();
 };

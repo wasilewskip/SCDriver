@@ -13,9 +13,10 @@ class Button : public IButton
     protected:
     ButtonType type;
     ButtonState state;
-    virtual ButtonState processPacket(const SteamInputPacket& steamInputPacket);
+    virtual void processPacket(const SteamInputPacket& steamInputPacket, ButtonDataChangedEvent& event);
+    virtual bool hasDataChanged(const ButtonDataChangedEvent& event);
 
     public:
     Button(ButtonType type);
-    virtual void updateState(const SteamInputPacket& steamInputPacket);
+    virtual std::unique_ptr<ButtonDataChangedEvent> updateState(const SteamInputPacket& steamInputPacket) override;
 };

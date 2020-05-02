@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "IButton.h"
-#include "../Connection/SteamInputPacket.h"
 
 class ButtonCollection
 {
@@ -11,5 +10,5 @@ class ButtonCollection
     public:
     ButtonCollection();
 
-    void update(const SteamInputPacket& packet);
+    std::vector<std::unique_ptr<ButtonDataChangedEvent>> update(const SteamInputPacket& packet);
 };

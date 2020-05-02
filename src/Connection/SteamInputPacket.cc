@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-SteamInputPacket::SteamInputPacket(unsigned char* data)
+SteamInputPacket::SteamInputPacket(uint8_t* data)
 {
     buttons = std::bitset<24>(data[8] << 16 | data[9] << 8| data[10]);
 
@@ -17,7 +17,7 @@ SteamInputPacket::SteamInputPacket(unsigned char* data)
     // print();
 }
 
-void SteamInputPacket::print()
+void SteamInputPacket::print()  
 {
         system("cls");
         std::cout << "Printing packet\n";
@@ -28,5 +28,6 @@ void SteamInputPacket::print()
         std::cout << "lpadY: " << lpadY << "\n";
         std::cout << "rpadX: " << rpadX << "\n";
         std::cout << "rpadY: " << rpadY << "\n";
-
+ 
+ 
 }
