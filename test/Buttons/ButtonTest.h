@@ -14,18 +14,9 @@ class ButtonTest : public ::testing::Test {
     SteamInputPacketBuilder builder;
     std::unique_ptr<IButton> testButtonPtr;
 
-    virtual void SetUp() {
-      
-    }
-
-    virtual void TearDown() {
-      testButtonPtr.reset();
-    }
-
-    public:
+    virtual void TearDown() override;
 
     void verifyButtonDataChangedEvent(std::unique_ptr<ButtonDataChangedEvent> eventPtr, ButtonType type, ButtonState state);
-
     void testEmptyPacket(const ButtonType buttonType);
     void testButtonPress(const ButtonType buttonType);
 };

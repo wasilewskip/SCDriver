@@ -1,5 +1,11 @@
 #include "ButtonTest.h"
 
+void ButtonTest::TearDown() 
+{
+    builder.reset();
+    testButtonPtr.reset();
+}
+
 void ButtonTest::verifyButtonDataChangedEvent(std::unique_ptr<ButtonDataChangedEvent> eventPtr, ButtonType type, ButtonState state)
 {
     ASSERT_NE(eventPtr, nullptr);
@@ -173,4 +179,43 @@ TEST_F(ButtonTest, EmptyPacketButtonRightBumperExpectNoEvent)
 {
     constexpr auto buttonType = ButtonType::RIGHT_BUMPER;
     testEmptyPacket(buttonType);
+}
+
+TEST_F(ButtonTest, PressButtonTwiceExpectOneEvent)
+{
+    constexpr auto buttonType = ButtonType::A;
+
+    testButtonPtr = std::make_unique<Button>(buttonType);
+
+    auto packet = builder
+                    .pressA()
+                    .build();
+
+    auto eventPtr = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+
+    eventPtr = testButtonPtr->updateState(packet);
+    ASSERT_EQ(eventPtr, nullptr);
+}
+
+TEST_F(ButtonTest, PressAndReleaseButtonExpectTwoEvents)
+{
+    constexpr auto buttonType = ButtonType::A;
+
+    testButtonPtr = std::make_unique<Button>(buttonType);
+
+    auto packet = builder
+                    .pressA()
+                    .build();
+
+    auto eventPtr = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+
+    // Build empty packet to release the button
+    builder.reset();
+    packet = builder
+                .build();
+
+    eventPtr = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::RELEASED);
 }

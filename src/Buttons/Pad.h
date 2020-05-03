@@ -18,9 +18,6 @@ class Pad : public Button
     ButtonState checkPadState(uint8_t touchedIndex, uint8_t pressedIndex, const SteamInputPacket& steamInputPacket);
     TouchPoint getTouchPointFromPacket(const SteamInputPacket& steamInputPacket);
 
-    bool isPadUsed(const ButtonState newState);
-    bool isJoystickUsed(const ButtonDataChangedEvent& event);
-
     protected:
     virtual void processPacket(const SteamInputPacket& steamInputPacket, ButtonDataChangedEvent& event) override;
     virtual bool hasDataChanged(const ButtonDataChangedEvent& event) override;

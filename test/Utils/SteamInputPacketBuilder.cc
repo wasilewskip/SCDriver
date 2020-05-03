@@ -282,3 +282,11 @@ SteamInputPacket SteamInputPacketBuilder::build()
 {
     return SteamInputPacket{packetData};
 }
+
+void SteamInputPacketBuilder::reset()
+{
+    for(int i = 0; i < PACKET_SIZE; i++)
+    {
+        packetData[i] = 0;
+    }
+}

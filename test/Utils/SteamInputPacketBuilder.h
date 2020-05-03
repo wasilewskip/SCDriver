@@ -42,4 +42,5 @@ public:
     SteamInputPacketBuilder& moveJoystick(int16_t x, int16_t y);
 
     SteamInputPacket build();
+    void reset();
 };

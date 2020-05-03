@@ -5,6 +5,6 @@
 
 class PadTest : public ButtonTest
 {
-    public:
+    protected:
     void verifyButtonDataChangedEvent(std::unique_ptr<ButtonDataChangedEvent> eventPtr, ButtonType type, ButtonState state, const TouchPoint& touchPoint);
 };

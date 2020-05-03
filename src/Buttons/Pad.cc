@@ -46,7 +46,7 @@ ButtonState Pad::checkPadState(uint8_t touchedIndex, uint8_t pressedIndex, const
 
 bool Pad::hasDataChanged(const ButtonDataChangedEvent& event)
 {
-    if(isPadUsed(event.state) || isJoystickUsed(event))
+    if(state != event.state || touchPoint != event.touchPoint)
     {
         state = event.state;
         touchPoint = event.touchPoint;
@@ -58,37 +58,21 @@ bool Pad::hasDataChanged(const ButtonDataChangedEvent& event)
     }
 }
 
-bool Pad::isPadUsed(const ButtonState newState)
-{
-    if(newState == ButtonState::TOUCHED || newState == ButtonState::PRESSED)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-bool Pad::isJoystickUsed(const ButtonDataChangedEvent& event)
-{
-    if((event.touchPoint.x != 0 || event.touchPoint.y != 0) && type == ButtonType::JOYSTICK)
-    {
-        return true;
-    }
-    else
-    {
-         return false;
-    }
-}
-
 TouchPoint Pad::getTouchPointFromPacket(const SteamInputPacket& steamInputPacket)
 {
     switch (type)
     {
     case ButtonType::LEFT_PAD :
     {
-        return TouchPoint{steamInputPacket.lpadX, steamInputPacket.lpadY};
+        auto leftPadState = processLeftPad(steamInputPacket);
+        if(leftPadState == ButtonState::TOUCHED || leftPadState == ButtonState::PRESSED)
+        {
+            return TouchPoint{steamInputPacket.lpadX, steamInputPacket.lpadY};
+        }
+        else
+        {
+            return TouchPoint{};
+        }
         break;
     }
     case ButtonType::JOYSTICK :
