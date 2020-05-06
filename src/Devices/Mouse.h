@@ -1,9 +1,8 @@
-#include "IDevice.h"
+#include "Device.h"
 
-class Mouse : public IDevice
+class Mouse : public Device
 {
-    private:
-    /* data */
     public:
-    virtual void triggerAction();
+    Mouse() : Device(DeviceType::MOUSE) { };
+    virtual void triggerAction(ActionCommandEvent actionCommand) override;
 };

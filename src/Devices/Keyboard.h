@@ -1,9 +1,14 @@
-#include "IDevice.h"
+#include "Device.h"
+#include "KeyboardPlatformApi.h"
+#include <memory>
 
-class Keyboard : public IDevice
+class Keyboard : public Device
 {
-
+    private:
+    std::unique_ptr<KeyboardPlatformApi> keyboardApi;
 
     public:
-    virtual void triggerAction();
+    Keyboard(std::unique_ptr<KeyboardPlatformApi> keyboardApi) : Device(DeviceType::KEYBOARD), keyboardApi(std::move(keyboardApi)) { };
+
+    virtual void triggerAction(ActionCommandEvent actionCommand) override;
 };
