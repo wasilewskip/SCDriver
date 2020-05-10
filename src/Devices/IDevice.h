@@ -6,6 +6,6 @@
 class IDevice
 {
     public:
-    virtual void triggerAction(ActionCommandEvent actionCommand) = 0;
+    virtual void triggerAction(const ActionCommandEvent& actionCommand) = 0;
     virtual DeviceType getType() = 0;
 };

@@ -10,5 +10,5 @@ class Keyboard : public Device
     public:
     Keyboard(std::unique_ptr<KeyboardPlatformApi> keyboardApi) : Device(DeviceType::KEYBOARD), keyboardApi(std::move(keyboardApi)) { };
 
-    virtual void triggerAction(ActionCommandEvent actionCommand) override;
+    virtual void triggerAction(const ActionCommandEvent& actionCommand) override;
 };

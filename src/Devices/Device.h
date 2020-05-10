@@ -10,5 +10,5 @@ class Device : public IDevice
 
     public:
     Device() = delete;
-    virtual DeviceType getType() final override;
+    virtual DeviceType getType() final override { return type; };
 };
