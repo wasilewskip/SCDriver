@@ -1,6 +1,6 @@
 #pragma once
 
-#define WINVER 0x0500
+#define WINVER 0x0600
 #include <windows.h>
 #include <memory>
 

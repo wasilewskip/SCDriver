@@ -2,9 +2,10 @@
 
 #include "ActionCommandEvent.h"
 #include "Buttons/ButtonDataChangedEvent.h"
+#include <memory>
 
 class IAction
 {
     public:
-    virtual ActionCommandEvent processButtonEvent(ButtonDataChangedEvent buttonEvent) = 0;
+    virtual ActionCommandEvent processButtonEvent(std::unique_ptr<ButtonDataChangedEvent> buttonEvent) = 0;
 };

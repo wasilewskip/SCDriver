@@ -29,33 +29,38 @@ void Pad::processPacket(const SteamInputPacket& steamInputPacket, ButtonDataChan
 
 ButtonState Pad::checkPadState(uint8_t touchedIndex, uint8_t pressedIndex, const SteamInputPacket& steamInputPacket)
 {
+    ButtonState newState = ButtonState::RELEASED;
+
     if(steamInputPacket.buttons[touchedIndex] && steamInputPacket.buttons[pressedIndex])
     {
-        return ButtonState::PRESSED;
+        newState = ButtonState::PRESSED;
     }
     else if(steamInputPacket.buttons[touchedIndex])
     {
-        return ButtonState::TOUCHED;
+        newState = ButtonState::TOUCHED;
     }
     else
     {
-        return ButtonState::RELEASED;
+        newState = ButtonState::RELEASED;
     }
-    
+
+    return newState;
 }
 
 bool Pad::hasDataChanged(const ButtonDataChangedEvent& event)
 {
+    bool hasDataChanged = false;
     if(state != event.state || touchPoint != event.touchPoint)
     {
         state = event.state;
         touchPoint = event.touchPoint;
-        return true;
+        hasDataChanged = true;
     }
     else
     {
-        return false;
+        hasDataChanged = false;
     }
+    return hasDataChanged;
 }
 
 TouchPoint Pad::getTouchPointFromPacket(const SteamInputPacket& steamInputPacket)

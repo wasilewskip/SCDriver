@@ -1,12 +1,12 @@
 #pragma once
 #include "Devices/DeviceType.h"
-#include "Actions/ActionType.h"
+#include "Actions/ActionResultType.h"
 #include "Devices/KeyboardKeyType.h"
 
 class ActionCommandEvent
 {
     public:
     DeviceType deviceType;
-    ActionType actionType;
+    ActionResultType actionResultType;
     KeyboardKeyType keyboardKeyType;
 };

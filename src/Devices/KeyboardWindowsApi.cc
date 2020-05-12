@@ -32,7 +32,7 @@ WORD KeyboardWindowsApi::mapInternalKeyToScanCode(KeyboardKeyType key)
     switch (key)
     {
     case KeyboardKeyType::A :
-        mappedKey = MapVirtualKeyEx(0x41, MAPVK_VSC_TO_VK_EX, GetKeyboardLayout(0)); 
+        mappedKey = MapVirtualKeyEx(0x41, MAPVK_VK_TO_VSC_EX, GetKeyboardLayout(0));
         break;
     
     default:

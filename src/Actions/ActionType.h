@@ -2,8 +2,7 @@
 
 enum class ActionType
 {
-    PRESS,
-    RELEASE,
-    PRESS_AND_RELEASE,
-    MOVE
+    KEYBOARD,
+    KEYBOARD_SEQUENCE,
+    MOUSE
 };

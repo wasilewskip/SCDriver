@@ -24,5 +24,6 @@ enum class ButtonState
 {
     RELEASED,
     PRESSED,
-    TOUCHED
+    TOUCHED,
+    MOVED
 };
