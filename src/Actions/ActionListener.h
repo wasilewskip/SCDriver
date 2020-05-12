@@ -14,7 +14,7 @@ class ActionListener
     public:
     ActionListener();
 
-    std::vector<ActionCommandEvent> processButtonEvents(std::vector<std::unique_ptr<ButtonDataChangedEvent>> buttonEvents);
+    std::vector<ActionCommandEvent> processButtonEvents(const std::vector<ButtonDataChangedEvent>& buttonEvents);
 
     void registerAction();
     void deregisterAction();

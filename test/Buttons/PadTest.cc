@@ -1,12 +1,11 @@
 #include "PadTest.h"
 
-void PadTest::verifyButtonDataChangedEvent(std::unique_ptr<ButtonDataChangedEvent> eventPtr, ButtonType type, ButtonState state, const TouchPoint& touchPoint)
+void PadTest::verifyButtonDataChangedEvent(const ButtonDataChangedEvent& event, ButtonType type, ButtonState state, const TouchPoint& touchPoint)
 {
-    ASSERT_NE(eventPtr, nullptr);
-    EXPECT_EQ(eventPtr->type, type);
-    EXPECT_EQ(eventPtr->state, state);
-    EXPECT_EQ(eventPtr->triggerInput, 0);
-    EXPECT_EQ(eventPtr->touchPoint, touchPoint);
+    EXPECT_EQ(event.type, type);
+    EXPECT_EQ(event.state, state);
+    EXPECT_EQ(event.triggerInput, 0);
+    EXPECT_EQ(event.touchPoint, touchPoint);
 }
 
 // Button left pad
@@ -19,9 +18,9 @@ TEST_F(PadTest, TouchLeftPadExpectEvent)
                     .touchLeftPad()
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ButtonTest::verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::TOUCHED);
+    ButtonTest::verifyButtonDataChangedEvent(*event, buttonType, ButtonState::TOUCHED);
 }
 
 TEST_F(PadTest, PressLeftPadExpectEvent)
@@ -33,9 +32,9 @@ TEST_F(PadTest, PressLeftPadExpectEvent)
                     .pressLeftPad()
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ButtonTest::verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+    ButtonTest::verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED);
 }
 
 TEST_F(PadTest, EmptyPacketLeftPadExpectNoEvent)
@@ -45,9 +44,9 @@ TEST_F(PadTest, EmptyPacketLeftPadExpectNoEvent)
     auto packet = builder
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ASSERT_EQ(eventPtr, nullptr);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 TEST_F(PadTest, MoveLeftPadExepctEvent)
@@ -64,9 +63,9 @@ TEST_F(PadTest, MoveLeftPadExepctEvent)
                     .moveLeftPad(X_VALUE, Y_VALUE)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, buttonState, TouchPoint{X_VALUE, Y_VALUE});
+    verifyButtonDataChangedEvent(*event, buttonType, buttonState, TouchPoint{X_VALUE, Y_VALUE});
 }
 
 // Button right pad
@@ -79,9 +78,9 @@ TEST_F(PadTest, TouchRightPadExpectEvent)
                     .touchRightPad()
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ButtonTest::verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::TOUCHED);
+    ButtonTest::verifyButtonDataChangedEvent(*event, buttonType, ButtonState::TOUCHED);
 }
 
 TEST_F(PadTest, PressRightPadExpectEvent)
@@ -93,9 +92,9 @@ TEST_F(PadTest, PressRightPadExpectEvent)
                     .pressRightPad()
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ButtonTest::verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+    ButtonTest::verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED);
 }
 
 TEST_F(PadTest, EmptyPacketRightPadExpectNoEvent)
@@ -105,9 +104,9 @@ TEST_F(PadTest, EmptyPacketRightPadExpectNoEvent)
     auto packet = builder
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ASSERT_EQ(eventPtr, nullptr);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 TEST_F(PadTest, MoveRightPadExepctEvent)
@@ -124,9 +123,9 @@ TEST_F(PadTest, MoveRightPadExepctEvent)
                     .moveRightPad(X_VALUE, Y_VALUE)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, buttonState, TouchPoint{X_VALUE, Y_VALUE});
+    verifyButtonDataChangedEvent(*event, buttonType, buttonState, TouchPoint{X_VALUE, Y_VALUE});
 }
 
 // Button joystick
@@ -139,9 +138,9 @@ TEST_F(PadTest, PressJoystickExpectEvent)
                     .pressJoystick()
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ButtonTest::verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+    ButtonTest::verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED);
 }
 
 TEST_F(PadTest, EmptyPacketJoystickExpectNoEvent)
@@ -151,9 +150,9 @@ TEST_F(PadTest, EmptyPacketJoystickExpectNoEvent)
     auto packet = builder
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ASSERT_EQ(eventPtr, nullptr);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 TEST_F(PadTest, MoveJoystickExepctEvent)
@@ -170,9 +169,9 @@ TEST_F(PadTest, MoveJoystickExepctEvent)
                     .moveJoystick(X_VALUE, Y_VALUE)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, buttonState, TouchPoint{X_VALUE, Y_VALUE});
+    verifyButtonDataChangedEvent(*event, buttonType, buttonState, TouchPoint{X_VALUE, Y_VALUE});
 }
 
 TEST_F(PadTest, MovePadTwiceAndReleaseExpectThreeEvents)
@@ -188,8 +187,8 @@ TEST_F(PadTest, MovePadTwiceAndReleaseExpectThreeEvents)
                     .moveLeftPad(X_INITIAL_VALUE, Y_INITIAL_VALUE)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::TOUCHED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::TOUCHED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
 
     constexpr auto X_SECOND_VALUE = 500;
     constexpr auto Y_SECOND_VALUE = 200;
@@ -198,15 +197,15 @@ TEST_F(PadTest, MovePadTwiceAndReleaseExpectThreeEvents)
                 .moveLeftPad(X_SECOND_VALUE, Y_SECOND_VALUE)
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::TOUCHED, TouchPoint{X_SECOND_VALUE, Y_SECOND_VALUE});
+    event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::TOUCHED, TouchPoint{X_SECOND_VALUE, Y_SECOND_VALUE});
 
     builder.reset();
     packet = builder
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::RELEASED, TouchPoint{});
+    event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::RELEASED, TouchPoint{});
 }
 
 TEST_F(PadTest, MovePadTwiceToSamePointExpectOneEvent)
@@ -222,11 +221,11 @@ TEST_F(PadTest, MovePadTwiceToSamePointExpectOneEvent)
                     .moveLeftPad(X_INITIAL_VALUE, Y_INITIAL_VALUE)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::TOUCHED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::TOUCHED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
 
-    eventPtr = testButtonPtr->updateState(packet);
-    ASSERT_EQ(eventPtr, nullptr);
+    event = testButtonPtr->updateState(packet);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 TEST_F(PadTest, MoveJoystickPressAndReleaseExpectThreeEvents)
@@ -242,20 +241,20 @@ TEST_F(PadTest, MoveJoystickPressAndReleaseExpectThreeEvents)
                     .moveJoystick(X_INITIAL_VALUE, Y_INITIAL_VALUE)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::RELEASED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::RELEASED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
 
     packet = builder
                 .pressJoystick()
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
+    event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED, TouchPoint{X_INITIAL_VALUE, Y_INITIAL_VALUE});
 
     builder.reset();
     packet = builder
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::RELEASED, TouchPoint{});
+    event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::RELEASED, TouchPoint{});
 }

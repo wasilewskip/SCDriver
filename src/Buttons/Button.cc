@@ -7,7 +7,7 @@ Button::Button(ButtonType type)
     this->state = ButtonState::RELEASED;
 }
 
-std::unique_ptr<ButtonDataChangedEvent> Button::updateState(const SteamInputPacket& steamInputPacket)
+std::optional<ButtonDataChangedEvent> Button::updateState(const SteamInputPacket& steamInputPacket)
 {
     ButtonDataChangedEvent event{type, state};
 
@@ -16,11 +16,11 @@ std::unique_ptr<ButtonDataChangedEvent> Button::updateState(const SteamInputPack
     if(hasDataChanged(event))
     {
         printButtonState();
-        return std::make_unique<ButtonDataChangedEvent>(event);
+        return event;
     }
     else
     {
-        return nullptr;
+        return std::nullopt;
     }
 }
 

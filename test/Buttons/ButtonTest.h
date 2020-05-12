@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <memory>
+#include <optional>
 #include "SteamInputPacketBuilder.h"
 #include "Buttons/IButton.h"
 #include "Buttons/Button.h"
@@ -16,7 +17,7 @@ class ButtonTest : public ::testing::Test {
 
     virtual void TearDown() override;
 
-    void verifyButtonDataChangedEvent(std::unique_ptr<ButtonDataChangedEvent> eventPtr, ButtonType type, ButtonState state);
+    void verifyButtonDataChangedEvent(const ButtonDataChangedEvent& event, ButtonType type, ButtonState state);
     void testEmptyPacket(const ButtonType buttonType);
     void testButtonPress(const ButtonType buttonType);
 };

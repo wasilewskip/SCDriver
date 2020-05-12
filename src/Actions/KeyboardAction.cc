@@ -1,15 +1,15 @@
 #include "KeyboardAction.h"
 
-ActionCommandEvent KeyboardAction::processButtonEvent(std::unique_ptr<ButtonDataChangedEvent> buttonEvent)
+ActionCommandEvent KeyboardAction::processButtonEvent(const ButtonDataChangedEvent& buttonEvent)
 {
     ActionCommandEvent actionEvent;
     actionEvent.deviceType = DeviceType::KEYBOARD;
 
-    if(buttonEvent->state == ButtonState::PRESSED)
+    if(buttonEvent.state == ButtonState::PRESSED)
     {
         actionEvent.actionResultType = ActionResultType::PRESS;
     }
-    else if(buttonEvent->state == ButtonState::RELEASED)
+    else if(buttonEvent.state == ButtonState::RELEASED)
     {
         actionEvent.actionResultType = ActionResultType::RELEASE;
     }

@@ -19,11 +19,3 @@ enum class ButtonType
     X = 22,
     A = 23,
 };
-
-enum class ButtonState
-{
-    RELEASED,
-    PRESSED,
-    TOUCHED,
-    MOVED
-};

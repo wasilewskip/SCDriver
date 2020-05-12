@@ -24,13 +24,16 @@ ButtonCollection::ButtonCollection()
     buttons.push_back(std::make_unique<Pad>(ButtonType::JOYSTICK));
 }
 
-std::vector<std::unique_ptr<ButtonDataChangedEvent>> ButtonCollection::update(const SteamInputPacket& packet)
+std::vector<ButtonDataChangedEvent> ButtonCollection::update(const SteamInputPacket& packet)
 {
-    std::vector<std::unique_ptr<ButtonDataChangedEvent>> events;
+    std::vector<ButtonDataChangedEvent> events;
     for(const auto& button : buttons)
     {
-        events.emplace_back(button->updateState(packet));
+        if(auto event = button->updateState(packet))
+        {
+            events.emplace_back(*event);
+        }
     }
 
-    return std::move(events);
+    return events;
 }

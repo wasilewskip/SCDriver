@@ -3,9 +3,10 @@
 #include "Connection/SteamInputPacket.h"
 #include "ButtonDataChangedEvent.h"
 #include <memory>
+#include <optional>
 
 class IButton
 {
     public:
-    virtual std::unique_ptr<ButtonDataChangedEvent> updateState(const SteamInputPacket& steamInputPacket) = 0;
+    virtual std::optional<ButtonDataChangedEvent> updateState(const SteamInputPacket& steamInputPacket) = 0;
 };

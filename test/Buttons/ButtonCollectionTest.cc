@@ -9,36 +9,22 @@ void ButtonCollectionTest::TearDown() {
     buttonCollectionPtr.reset();
 }
 
-auto ButtonCollectionTest::findEvent(const EventsVector& events, ButtonType buttonType)
+auto ButtonCollectionTest::findEvent(const std::vector<ButtonDataChangedEvent>& events, ButtonType buttonType)
 {
     auto findEventWithGivenType =
-    [&buttonType] (const auto& event) { return event->type == buttonType; };
+    [&buttonType] (const auto& event) { return event.type == buttonType; };
     return std::find_if(events.begin(), events.end(), findEventWithGivenType);
 }
 
-void ButtonCollectionTest::verifyEventByType(const EventsVector& events, ButtonType buttonType, ButtonState state, TouchPoint touchPoint)
+void ButtonCollectionTest::verifyEventByType(const std::vector<ButtonDataChangedEvent>& events, ButtonType buttonType, ButtonState state, TouchPoint touchPoint)
 {
     const auto& eventIt = findEvent(std::move(events), buttonType);
     if(eventIt != events.end())
     {
-        EXPECT_EQ((*eventIt)->type, buttonType);
-        EXPECT_EQ((*eventIt)->state, state);
-        EXPECT_EQ((*eventIt)->touchPoint, touchPoint);
+        EXPECT_EQ((*eventIt).type, buttonType);
+        EXPECT_EQ((*eventIt).state, state);
+        EXPECT_EQ((*eventIt).touchPoint, touchPoint);
     }
-}
-
-void ButtonCollectionTest::removeNullptrEvents(EventsVector& events)
-{
-    auto filterNullptrsPredicate = [] (const auto& event) { return event == nullptr; };
-
-    events.erase(
-        std::remove_if(
-            events.begin(),
-            events.end(),
-            filterNullptrsPredicate
-        ),
-        events.end()
-    );
 }
 
 TEST_F(ButtonCollectionTest, PressAllButtonsExpectAllEvents)
@@ -66,7 +52,6 @@ TEST_F(ButtonCollectionTest, PressAllButtonsExpectAllEvents)
                     .build();
 
     auto events = buttonCollectionPtr->update(packet);
-    removeNullptrEvents(events);
 
     EXPECT_EQ(events.size(), EXPECTED_NUMBER_OF_EVENTS);
 }
@@ -86,7 +71,6 @@ TEST_F(ButtonCollectionTest, MoveLeftAndRightPadExpectEvents)
                     .build();
     
     auto events = buttonCollectionPtr->update(packet);
-    removeNullptrEvents(events);
 
     EXPECT_EQ(events.size(), INITIAL_NUMBER_OF_EVENTS);
     verifyEventByType(events, ButtonType::X, ButtonState::PRESSED, TouchPoint{});
@@ -104,7 +88,6 @@ TEST_F(ButtonCollectionTest, MoveLeftAndRightPadExpectEvents)
                 .build();
 
     events = buttonCollectionPtr->update(packet);
-    removeNullptrEvents(events);
 
     EXPECT_EQ(events.size(), SECOND_NUMBER_OF_EVENTS);
     verifyEventByType(events, ButtonType::LEFT_PAD, ButtonState::TOUCHED, TouchPoint{X_LEFT_PAD_SECOND, Y_LEFT_PAD_SECOND});
@@ -123,7 +106,6 @@ TEST_F(ButtonCollectionTest, MoveLeftPadAndJoystickExpectOneEvent)
                 .build();
 
     auto events = buttonCollectionPtr->update(packet);
-    removeNullptrEvents(events);
 
     EXPECT_EQ(events.size(), INITIAL_NUMBER_OF_EVENTS);
     verifyEventByType(events, ButtonType::LEFT_PAD, ButtonState::TOUCHED, TouchPoint{X_LEFT_PAD_INITIAL, Y_LEFT_PAD_INITIAL});
@@ -140,7 +122,6 @@ TEST_F(ButtonCollectionTest, MoveJoystickExpectNoLeftPadEvent)
                 .build();
 
     auto events = buttonCollectionPtr->update(packet);
-    removeNullptrEvents(events);
 
     EXPECT_EQ(events.size(), INITIAL_NUMBER_OF_EVENTS);
     verifyEventByType(events, ButtonType::JOYSTICK, ButtonState::RELEASED, TouchPoint{X_LEFT_PAD_INITIAL, Y_LEFT_PAD_INITIAL});

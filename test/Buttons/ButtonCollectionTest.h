@@ -6,8 +6,6 @@
 #include "Buttons/ButtonCollection.h"
 #include <tuple>
 
-using EventsVector = std::vector<std::unique_ptr<ButtonDataChangedEvent>>;
-
 class ButtonCollectionTest : public ::testing::Test
 {
     protected:
@@ -17,7 +15,6 @@ class ButtonCollectionTest : public ::testing::Test
     virtual void SetUp() override;
     virtual void TearDown() override;
     
-    void removeNullptrEvents(EventsVector& events);
-    auto findEvent(const EventsVector& events, ButtonType buttonType);
-    void verifyEventByType(const EventsVector& events, ButtonType buttonType, ButtonState state, TouchPoint touchPoint);
+    auto findEvent(const std::vector<ButtonDataChangedEvent>& events, ButtonType buttonType);
+    void verifyEventByType(const std::vector<ButtonDataChangedEvent>& events, ButtonType buttonType, ButtonState state, TouchPoint touchPoint);
 };

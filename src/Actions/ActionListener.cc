@@ -8,18 +8,15 @@ ActionListener::ActionListener()
     actionMap.insert(std::make_pair(ActionType::KEYBOARD, std::move(action)));
 }
 
-std::vector<ActionCommandEvent> ActionListener::processButtonEvents(std::vector<std::unique_ptr<ButtonDataChangedEvent>> buttonEvents)
+std::vector<ActionCommandEvent> ActionListener::processButtonEvents(const std::vector<ButtonDataChangedEvent>& buttonEvents)
 {
     std::vector<ActionCommandEvent> actions;
 
     for(auto& buttonEvent : buttonEvents)
     {
         // TODO: find proper action based on config (each button should have defined action type)
-        if(buttonEvent != nullptr)
-        {
-            auto action = actionMap[ActionType::KEYBOARD]->processButtonEvent(std::move(buttonEvent));
-            actions.emplace_back(action);
-        }
+        auto action = actionMap[ActionType::KEYBOARD]->processButtonEvent(buttonEvent);
+        actions.emplace_back(action);
     }
     return actions;
 }

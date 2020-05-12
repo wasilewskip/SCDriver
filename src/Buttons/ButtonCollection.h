@@ -10,5 +10,5 @@ class ButtonCollection
     public:
     ButtonCollection();
 
-    std::vector<std::unique_ptr<ButtonDataChangedEvent>> update(const SteamInputPacket& packet);
+    std::vector<ButtonDataChangedEvent> update(const SteamInputPacket& packet);
 };

@@ -6,13 +6,12 @@ void ButtonTest::TearDown()
     testButtonPtr.reset();
 }
 
-void ButtonTest::verifyButtonDataChangedEvent(std::unique_ptr<ButtonDataChangedEvent> eventPtr, ButtonType type, ButtonState state)
+void ButtonTest::verifyButtonDataChangedEvent(const ButtonDataChangedEvent& event, ButtonType type, ButtonState state)
 {
-    ASSERT_NE(eventPtr, nullptr);
-    EXPECT_EQ(eventPtr->type, type);
-    EXPECT_EQ(eventPtr->state, state);
-    EXPECT_EQ(eventPtr->triggerInput, 0);
-    EXPECT_EQ(eventPtr->touchPoint, TouchPoint{});
+    EXPECT_EQ(event.type, type);
+    EXPECT_EQ(event.state, state);
+    EXPECT_EQ(event.triggerInput, 0);
+    EXPECT_EQ(event.touchPoint, TouchPoint{});
 }
 
 void ButtonTest::testEmptyPacket(const ButtonType buttonType)
@@ -20,9 +19,9 @@ void ButtonTest::testEmptyPacket(const ButtonType buttonType)
     testButtonPtr = std::make_unique<Button>(buttonType);
 
     auto emptyPacket = builder.build();
-    auto eventPtr = testButtonPtr->updateState(emptyPacket);
+    auto event = testButtonPtr->updateState(emptyPacket);
 
-    ASSERT_EQ(eventPtr, nullptr);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 void ButtonTest::testButtonPress(const ButtonType buttonType)
@@ -33,9 +32,9 @@ void ButtonTest::testButtonPress(const ButtonType buttonType)
                     .press(buttonType)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED);
 }
 
 // Button A
@@ -191,11 +190,11 @@ TEST_F(ButtonTest, PressButtonTwiceExpectOneEvent)
                     .pressA()
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED);
 
-    eventPtr = testButtonPtr->updateState(packet);
-    ASSERT_EQ(eventPtr, nullptr);
+    event = testButtonPtr->updateState(packet);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 TEST_F(ButtonTest, PressAndReleaseButtonExpectTwoEvents)
@@ -208,14 +207,14 @@ TEST_F(ButtonTest, PressAndReleaseButtonExpectTwoEvents)
                     .pressA()
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED);
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED);
 
     // Build empty packet to release the button
     builder.reset();
     packet = builder
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::RELEASED);
+    event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::RELEASED);
 }

@@ -7,5 +7,5 @@
 class IAction
 {
     public:
-    virtual ActionCommandEvent processButtonEvent(std::unique_ptr<ButtonDataChangedEvent> buttonEvent) = 0;
+    virtual ActionCommandEvent processButtonEvent(const ButtonDataChangedEvent& buttonEvent) = 0;
 };

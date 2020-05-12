@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ButtonType.h"
+#include "ButtonState.h"
 #include "TouchPoint.h"
 #include <vector>
 

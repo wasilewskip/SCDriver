@@ -2,6 +2,7 @@
 
 #include "IButton.h"
 #include "ButtonType.h"
+#include "ButtonState.h"
 #include <string>
 
 class Button : public IButton
@@ -18,5 +19,5 @@ class Button : public IButton
 
     public:
     Button(ButtonType type);
-    virtual std::unique_ptr<ButtonDataChangedEvent> updateState(const SteamInputPacket& steamInputPacket) override;
+    virtual std::optional<ButtonDataChangedEvent> updateState(const SteamInputPacket& steamInputPacket) override;
 };

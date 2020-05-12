@@ -10,7 +10,7 @@ void SteamController::run()
     {
         const auto& packet = connectionPtr->read();
         auto buttonEvents = buttons->update(packet);
-        auto actionCommands = actionListener.processButtonEvents(std::move(buttonEvents));
+        auto actionCommands = actionListener.processButtonEvents(buttonEvents);
         deviceManager.processActionCommands(actionCommands);
     }
 }

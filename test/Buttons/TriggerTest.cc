@@ -1,12 +1,11 @@
 #include "TriggerTest.h"
 
-void TriggerTest::verifyButtonDataChangedEvent(std::unique_ptr<ButtonDataChangedEvent> eventPtr, ButtonType type, ButtonState state, uint16_t triggerInput)
+void TriggerTest::verifyButtonDataChangedEvent(const ButtonDataChangedEvent& event, ButtonType type, ButtonState state, uint16_t triggerInput)
 {
-    ASSERT_NE(eventPtr, nullptr);
-    EXPECT_EQ(eventPtr->type, type);
-    EXPECT_EQ(eventPtr->state, state);
-    EXPECT_EQ(eventPtr->triggerInput, triggerInput);
-    EXPECT_EQ(eventPtr->touchPoint, TouchPoint{});
+    EXPECT_EQ(event.type, type);
+    EXPECT_EQ(event.state, state);
+    EXPECT_EQ(event.triggerInput, triggerInput);
+    EXPECT_EQ(event.touchPoint, TouchPoint{});
 }
 
 // Button left trigger
@@ -20,9 +19,9 @@ TEST_F(TriggerTest, PressButtonLeftTriggerExpectEvent)
                     .pressLeftTrigger(FULLY_PRESSED_TRIGGER)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED, FULLY_PRESSED_TRIGGER);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED, FULLY_PRESSED_TRIGGER);
 }
 
 TEST_F(TriggerTest, EmptyPacketButtonLeftTriggerExpectNoEvent)
@@ -32,9 +31,9 @@ TEST_F(TriggerTest, EmptyPacketButtonLeftTriggerExpectNoEvent)
     auto packet = builder
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ASSERT_EQ(eventPtr, nullptr);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 // Button right trigger
@@ -48,9 +47,9 @@ TEST_F(TriggerTest, PressButtonRightTriggerExpectEvent)
                     .pressRightTrigger(FULLY_PRESSED_TRIGGER)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED, FULLY_PRESSED_TRIGGER);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED, FULLY_PRESSED_TRIGGER);
 }
 
 TEST_F(TriggerTest, EmptyPacketButtonRightTriggerExpectNoEvent)
@@ -60,9 +59,9 @@ TEST_F(TriggerTest, EmptyPacketButtonRightTriggerExpectNoEvent)
     auto packet = builder
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
+    auto event = testButtonPtr->updateState(packet);
 
-    ASSERT_EQ(eventPtr, nullptr);
+    ASSERT_EQ(event, std::nullopt);
 }
 
 TEST_F(TriggerTest, PressAndReleaseTriggerExpectTwoEvents)
@@ -75,15 +74,15 @@ TEST_F(TriggerTest, PressAndReleaseTriggerExpectTwoEvents)
                     .pressLeftTrigger(HALF_PRESSED_TRIGGER)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED, HALF_PRESSED_TRIGGER);
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED, HALF_PRESSED_TRIGGER);
 
     builder.reset();
     packet = builder
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    ButtonTest::verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::RELEASED);
+    event = testButtonPtr->updateState(packet);
+    ButtonTest::verifyButtonDataChangedEvent(*event, buttonType, ButtonState::RELEASED);
 }
 
 TEST_F(TriggerTest, PressTriggerTwiceDifferentValuesExpectTwoEvents)
@@ -98,15 +97,15 @@ TEST_F(TriggerTest, PressTriggerTwiceDifferentValuesExpectTwoEvents)
                     .pressRightTrigger(FULLY_PRESSED_TRIGGER)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED, FULLY_PRESSED_TRIGGER);
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED, FULLY_PRESSED_TRIGGER);
 
     packet = builder
                 .pressRightTrigger(HALF_PRESSED_TRIGGER)
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED, HALF_PRESSED_TRIGGER);
+    event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED, HALF_PRESSED_TRIGGER);
 }
 
 TEST_F(TriggerTest, PressTriggerTwiceSameValuesExpectOneEvent)
@@ -120,13 +119,13 @@ TEST_F(TriggerTest, PressTriggerTwiceSameValuesExpectOneEvent)
                     .pressRightTrigger(HALF_PRESSED_TRIGGER)
                     .build();
 
-    auto eventPtr = testButtonPtr->updateState(packet);
-    verifyButtonDataChangedEvent(std::move(eventPtr), buttonType, ButtonState::PRESSED, HALF_PRESSED_TRIGGER);
+    auto event = testButtonPtr->updateState(packet);
+    verifyButtonDataChangedEvent(*event, buttonType, ButtonState::PRESSED, HALF_PRESSED_TRIGGER);
 
     packet = builder
                 .pressRightTrigger(HALF_PRESSED_TRIGGER)
                 .build();
 
-    eventPtr = testButtonPtr->updateState(packet);
-    ASSERT_EQ(eventPtr, nullptr);
+    event = testButtonPtr->updateState(packet);
+    ASSERT_EQ(event, std::nullopt);
 }
