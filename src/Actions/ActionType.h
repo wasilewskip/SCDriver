@@ -2,7 +2,5 @@
 
 enum class ActionType
 {
-    KEYBOARD,
-    KEYBOARD_SEQUENCE,
-    MOUSE
+    KEYBOARD_ACTION
 };

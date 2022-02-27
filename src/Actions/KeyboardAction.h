@@ -1,10 +1,14 @@
 #pragma once
 
-#include "IAction.h"
+#include "Action.h"
+#include "Devices/IDevice.h"
+#include <memory>
 
-class KeyboardAction : public IAction
+class KeyboardAction : public Action
 {
+    std::unique_ptr<IDevice> device;
 
     public:
-    virtual ActionCommandEvent processButtonEvent(const ButtonDataChangedEvent& buttonEvent) override;
+    KeyboardAction(std::unique_ptr<IDevice> device) : Action(ActionType::KEYBOARD_ACTION), device(std::move(device))  { };
+    virtual void processButtonEvent(const ButtonDataChangedEvent& buttonEvent) override;
 };

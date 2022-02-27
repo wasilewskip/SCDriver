@@ -1,11 +1,11 @@
 #pragma once
 
 #include "DeviceType.h"
-#include "Actions/ActionCommandEvent.h"
+#include "Buttons/ButtonDataChangedEvent.h"
 
 class IDevice
 {
     public:
-    virtual void triggerAction(const ActionCommandEvent& actionCommand) = 0;
+    virtual void triggerAction(const ButtonDataChangedEvent& event) = 0;
     virtual DeviceType getType() = 0;
 };

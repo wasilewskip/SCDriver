@@ -1,22 +1,25 @@
 #include "ActionListener.h"
 #include "KeyboardAction.h"
+#include "Devices/Keyboard.h"
+#include "Devices/KeyboardPlatformApi.h"
+#include "Devices/KeyboardWindowsApi.h"
+#include "Devices/WindowsApiWrapper.h"
 
 ActionListener::ActionListener()
 {
-    // TODO: remove it later. Temporary solution just for tests
-    std::unique_ptr<IAction> action = std::make_unique<KeyboardAction>();
-    actionMap.insert(std::make_pair(ActionType::KEYBOARD, std::move(action)));
+    std::unique_ptr<WindowsApiWrapper> windowsKeyboardApiWrapper = std::make_unique<WindowsApiWrapper>();
+    std::unique_ptr<KeyboardPlatformApi> keyboardApi = std::make_unique<KeyboardWindowsApi>(std::move(windowsKeyboardApiWrapper));
+    std::unique_ptr<IDevice> device = std::make_unique<Keyboard>(std::move(keyboardApi), KeyboardKeyType::A);
+    actionMap[ButtonType::Y] = std::make_unique<KeyboardAction>(std::move(device));
 }
 
-std::vector<ActionCommandEvent> ActionListener::processButtonEvents(const std::vector<ButtonDataChangedEvent>& buttonEvents)
+void ActionListener::processButtonEvents(const std::vector<ButtonDataChangedEvent>& buttonEvents)
 {
-    std::vector<ActionCommandEvent> actions;
-
-    for(auto& buttonEvent : buttonEvents)
+    for(const auto& buttonEvent : buttonEvents)
     {
-        // TODO: find proper action based on config (each button should have defined action type)
-        auto action = actionMap[ActionType::KEYBOARD]->processButtonEvent(buttonEvent);
-        actions.emplace_back(action);
+        if(actionMap.count(buttonEvent.type))
+        {
+            actionMap[buttonEvent.type]->processButtonEvent(buttonEvent);
+        }
     }
-    return actions;
 }

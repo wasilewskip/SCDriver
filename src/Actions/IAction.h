@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ActionCommandEvent.h"
 #include "Buttons/ButtonDataChangedEvent.h"
-#include <memory>
+#include "ActionType.h"
 
 class IAction
 {
     public:
-    virtual ActionCommandEvent processButtonEvent(const ButtonDataChangedEvent& buttonEvent) = 0;
+    virtual ActionType getType() = 0;
+    virtual void processButtonEvent(const ButtonDataChangedEvent& buttonEvent) = 0;
 };

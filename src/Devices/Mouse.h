@@ -4,5 +4,5 @@ class Mouse : public Device
 {
     public:
     Mouse() : Device(DeviceType::MOUSE) { };
-    virtual void triggerAction(ActionCommandEvent actionCommand) override;
+    virtual void triggerAction(const ButtonDataChangedEvent& event) override;
 };
