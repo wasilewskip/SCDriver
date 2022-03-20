@@ -1,16 +1,11 @@
 #include "ActionListener.h"
 #include "KeyboardAction.h"
-#include "Devices/Keyboard.h"
-#include "Devices/KeyboardPlatformApi.h"
-#include "Devices/KeyboardWindowsApi.h"
-#include "Devices/WindowsApiWrapper.h"
 
-ActionListener::ActionListener()
+ActionListener::ActionListener(std::unique_ptr<IDeviceFactory> deviceFactory)
 {
-    std::unique_ptr<WindowsApiWrapper> windowsKeyboardApiWrapper = std::make_unique<WindowsApiWrapper>();
-    std::unique_ptr<KeyboardPlatformApi> keyboardApi = std::make_unique<KeyboardWindowsApi>(std::move(windowsKeyboardApiWrapper));
-    std::unique_ptr<IDevice> device = std::make_unique<Keyboard>(std::move(keyboardApi), KeyboardKeyType::A);
-    actionMap[ButtonType::Y] = std::make_unique<KeyboardAction>(std::move(device));
+    deviceFactory = std::move(deviceFactory);
+    std::unique_ptr<IKeyboard> keyboard = deviceFactory->createKeyboard();
+    actionMap[ButtonType::Y] = std::make_unique<KeyboardAction>(std::move(keyboard));
 }
 
 void ActionListener::processButtonEvents(const std::vector<ButtonDataChangedEvent>& buttonEvents)

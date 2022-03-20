@@ -1,15 +1,15 @@
-#include "Device.h"
+#include "IKeyboard.h"
 #include "KeyboardPlatformApi.h"
 #include <memory>
 
-class Keyboard : public Device
+class Keyboard : public IKeyboard
 {
     private:
     std::unique_ptr<KeyboardPlatformApi> keyboardApi;
-    KeyboardKeyType keyType;
 
     public:
-    Keyboard(std::unique_ptr<KeyboardPlatformApi> keyboardApi, KeyboardKeyType keyType) : Device(DeviceType::KEYBOARD), keyboardApi(std::move(keyboardApi)), keyType(keyType) { };
+    Keyboard(std::unique_ptr<KeyboardPlatformApi> keyboardApi) : IKeyboard(), keyboardApi(std::move(keyboardApi)){ };
 
-    virtual void triggerAction(const ButtonDataChangedEvent& event) override;
+    virtual void pressKey(KeyboardKeyType key) override;
+    virtual void releaseKey(KeyboardKeyType key) override;
 };

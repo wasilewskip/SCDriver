@@ -1,13 +1,11 @@
 #include "Keyboard.h"
 
-void Keyboard::triggerAction(const ButtonDataChangedEvent& event)
+void Keyboard::pressKey(KeyboardKeyType key)
 {
-    if(event.state == ButtonState::PRESSED)
-    {
-        keyboardApi->pressKey(keyType);
-    }
-    else if(event.state == ButtonState::RELEASED)
-    {
-        keyboardApi->releaseKey(keyType);
-    }
+    keyboardApi->pressKey(key);
+}
+
+void Keyboard::releaseKey(KeyboardKeyType key)
+{
+    keyboardApi->releaseKey(key);
 }

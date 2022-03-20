@@ -10,10 +10,9 @@ class SteamController
     private:
     std::unique_ptr<IConnection> connectionPtr;
     std::unique_ptr<ButtonCollection> buttons;
-    ActionListener actionListener;
+    std::unique_ptr<ActionListener> actionListener;
     
-
     public:
-    SteamController(std::unique_ptr<IConnection> connection, std::unique_ptr<ButtonCollection> buttons, ActionListener actionListener);
+    SteamController(std::unique_ptr<IConnection> connection, std::unique_ptr<ButtonCollection> buttons, std::unique_ptr<ActionListener> actionListener);
     void run();
 };
